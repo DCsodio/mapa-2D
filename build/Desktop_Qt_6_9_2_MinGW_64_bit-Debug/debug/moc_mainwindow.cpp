@@ -42,8 +42,8 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         "on_limpiar_clicked",
         "",
         "onNewConnection",
-        "onTextMessageReceived",
-        "message",
+        "onBinaryMessageReceived",
+        "data",
         "on_pushButton_adelante_pressed",
         "on_pushButton_adelante_released",
         "on_pushButton_izquierda_pressed",
@@ -59,9 +59,9 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         QtMocHelpers::SlotData<void()>(1, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'onNewConnection'
         QtMocHelpers::SlotData<void()>(3, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'onTextMessageReceived'
-        QtMocHelpers::SlotData<void(QString)>(4, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::QString, 5 },
+        // Slot 'onBinaryMessageReceived'
+        QtMocHelpers::SlotData<void(const QByteArray &)>(4, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::QByteArray, 5 },
         }}),
         // Slot 'on_pushButton_adelante_pressed'
         QtMocHelpers::SlotData<void()>(6, 2, QMC::AccessPrivate, QMetaType::Void),
@@ -104,7 +104,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         switch (_id) {
         case 0: _t->on_limpiar_clicked(); break;
         case 1: _t->onNewConnection(); break;
-        case 2: _t->onTextMessageReceived((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 2: _t->onBinaryMessageReceived((*reinterpret_cast< std::add_pointer_t<QByteArray>>(_a[1]))); break;
         case 3: _t->on_pushButton_adelante_pressed(); break;
         case 4: _t->on_pushButton_adelante_released(); break;
         case 5: _t->on_pushButton_izquierda_pressed(); break;

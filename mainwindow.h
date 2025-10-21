@@ -9,6 +9,7 @@
 #include "magnetometro.h"
 #include "laser.h"
 #include "vehiculo.h"
+#include "paquete.h"
 
 #include <vector>
 #include <QWebSocketServer>
@@ -34,7 +35,7 @@ private slots:
     void on_limpiar_clicked();
 
     void onNewConnection();
-    void onTextMessageReceived(QString message);
+    void onBinaryMessageReceived(const QByteArray &data);
 
 
 
@@ -64,6 +65,8 @@ private:
 
     Ui::MainWindow *ui;
     QGraphicsScene *escena;
+
+    Paquete pkt;
 
     std::vector<Punto*> puntos; //almacena las direcciones de los puntos para poder tener control
 

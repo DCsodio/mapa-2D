@@ -3,36 +3,14 @@
 
 magnetometro::magnetometro() {}
 
-bool magnetometro::calcularAngulo()
+float magnetometro::getAnguloDeg() const
 {
-    anguloRad=atan2((double)valOp,(double)valAd);
-
-    return true;
+    return anguloDeg;
 }
 
-int magnetometro::getValOp() const
+void magnetometro::setAnguloDeg(float _angulo)
 {
-    return valOp;
-}
-
-void magnetometro::setValOp(int newValOp)
-{
-    valOp = newValOp;
-}
-
-int magnetometro::getValAd() const
-{
-    return valAd;
-}
-
-void magnetometro::setValAd(int newValAd)
-{
-    valAd = newValAd;
-}
-
-double magnetometro::getAnguloRad() const
-{
-    return anguloRad;
+    anguloDeg=_angulo;
 }
 
 

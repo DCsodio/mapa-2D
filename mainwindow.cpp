@@ -108,9 +108,9 @@ void MainWindow::onNewConnection()
 {
     QWebSocket *client = m_webSocketServer->nextPendingConnection();
     m_clients.append(client);
+    connect(client, &QWebSocket::binaryMessageReceived,
+            this, &MainWindow::onBinaryMessageReceived);
 
-    connect(client, &QWebSocket::textMessageReceived,
-            this, &MainWindow::onTextMessageReceived);
     connect(client, &QWebSocket::disconnected, [this, client]() {
         m_clients.removeAll(client);
         client->deleteLater();
@@ -121,37 +121,31 @@ void MainWindow::onNewConnection()
 
 
 //slot de recibir mensaje
-void MainWindow::onTextMessageReceived(QString message)
+void MainWindow::onBinaryMessageReceived(const QByteArray &data)
 {
-    QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8());
-    if (!doc.isObject()) return;
-    QJsonObject obj = doc.object();
-
-    if(obj["accion"].toString()=="sensando"){
-        qDebug()<<"Sensando....";
-        enBotones=false;
-        sensLaser.setDistanciaMm(obj["hipo"].toInt());
-        sensAngulo.setValOp(obj["catop"].toInt());
-        sensAngulo.setValAd(obj["catad"].toInt());
-
-        coche.setPosMmX(obj["posx"].toInt());
-        coche.setPosMmY(obj["posy"].toInt());
-
-        sensAngulo.calcularAngulo();
-        qDebug()<<sensAngulo.getValAd();
-        qDebug()<<sensAngulo.getAnguloRad();
-        //sohcahtoa
-        double posX=cos(sensAngulo.getAnguloRad())*sensLaser.getDistanciaMm();
-        double posY=sin(sensAngulo.getAnguloRad())*sensLaser.getDistanciaMm();
-
-        posX+=coche.getPosMmX();
-        posY+=coche.getPosMmY();
-
-        agregarPunto(posX,posY,1);
-    }else{
-        enBotones=true;
-        qDebug()<<"Moviendo el vehiculo...";
+    // 1. Verifico tamaño esperado
+    if (data.size() != sizeof(Paquete)){
+        qDebug() << "Tamaño incorrecto. Esperado:" << sizeof(Paquete) << "Recibido:" << data.size();
+        return;
     }
+    // 2. Casteo a struct
+     memcpy(&pkt, data.constData(), sizeof(Paquete));
+
+    // 3. Verifico headers
+    if(pkt.header[0] != HEADERONE || pkt.header[1] != HEADERTWO)
+        return;
+    uint32_t valChecksum= calcularChecksum(&pkt);
+    if(valChecksum==pkt.checksum){
+        //aca hay que agregar el punto
+        // 5. Uso los datos
+        qDebug() << "Dist (mm):" << pkt.distanciaMm;
+        qDebug() << "Grados:" << pkt.grados;
+        qDebug() << "Pos X:" << pkt.posX;
+        qDebug() << "Pos Y:" << pkt.posY;
+    }else{
+        qDebug() << "ERROR EN EL PAQUETE";
+    }
+
 }
 
 void MainWindow::enviarMensaje(QString mensaje)

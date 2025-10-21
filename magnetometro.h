@@ -6,22 +6,11 @@ class magnetometro
 public:
     magnetometro();
 
-    bool calcularAngulo(void);
-
-
-
-    int getValOp() const;
-    void setValOp(int newValOp);
-    int getValAd() const;
-    void setValAd(int newValAd);
-
-    double getAnguloRad() const;
+    float getAnguloDeg() const;
+    void setAnguloDeg(float _angulo);
 
 private:
-    int valOp;
-    int valAd;
-
-    double anguloRad;
+    float anguloDeg;
 };
 
 #endif // MAGNETOMETRO_H
