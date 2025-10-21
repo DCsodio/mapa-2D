@@ -1,0 +1,10 @@
+{
+  	"accion":"sensao",
+  	"hipo": 110,
+  	"catop": 30,
+  	"catad": 40,
+  	"posx": 50,
+	"posy":50		
+}
+
+agregar cuadro de errores (desconexion, y reeconexion, conexion)
