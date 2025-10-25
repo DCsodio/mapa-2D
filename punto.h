@@ -10,8 +10,6 @@ class Punto : public QGraphicsItem {
 public:
     Punto(double x, double y,unsigned int _ID, const QColor &color);
 
-    void aCartesiana(int hipotenusa, double angulo);
-
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
 

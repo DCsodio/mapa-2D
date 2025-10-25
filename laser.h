@@ -1,16 +1,17 @@
 #ifndef LASER_H
 #define LASER_H
 
+#include <stdint.h>
 class laser
 {
 public:
     laser();
 
-    int getDistanciaMm() const;
-    void setDistanciaMm(int newDistanciaMm);
+    uint16_t getDistanciaMm() const;
+    void setDistanciaMm(uint16_t newDistanciaMm);
 
 private:
-    int distanciaMm;
+    uint16_t distanciaMm;
 
 };
 

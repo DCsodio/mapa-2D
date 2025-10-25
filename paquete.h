@@ -1,7 +1,7 @@
 #ifndef PAQUETE_H
 #define PAQUETE_H
 #include <stdint.h>
-
+#include <cmath>
 #define HEADERONE '{'
 #define HEADERTWO '{'
 
@@ -18,6 +18,10 @@ typedef struct {
 #pragma pack(pop)
 
 extern Paquete pkt;
+extern float puntoLeidoX;
+extern float puntoLeidoY;
+
 uint32_t calcularChecksum(Paquete* pkt);
+void aCartesiano(uint16_t hipotenusa, float grados);
 
 #endif // PAQUETE_H

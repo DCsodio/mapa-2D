@@ -74,7 +74,7 @@ private:
     laser sensLaser;
     vehiculo coche;
 
-    bool enBotones=false;
+    bool enableBotones=false;
 
     QWebSocketServer *m_webSocketServer;
     QList<QWebSocket*> m_clients;

@@ -120,7 +120,7 @@ void MainWindow::onNewConnection()
 }
 
 
-//slot de recibir mensaje
+//slot de recibir paquete de wifi (EPS32)
 void MainWindow::onBinaryMessageReceived(const QByteArray &data)
 {
     // 1. Verifico tamaño esperado
@@ -128,20 +128,37 @@ void MainWindow::onBinaryMessageReceived(const QByteArray &data)
         qDebug() << "Tamaño incorrecto. Esperado:" << sizeof(Paquete) << "Recibido:" << data.size();
         return;
     }
-    // 2. Casteo a struct
-     memcpy(&pkt, data.constData(), sizeof(Paquete));
+    // 2. Casteo a struct (copio lo que me llego en pkt)
+    memcpy(&pkt, data.constData(), sizeof(Paquete));
 
     // 3. Verifico headers
-    if(pkt.header[0] != HEADERONE || pkt.header[1] != HEADERTWO)
-        return;
+     if(pkt.header[0] != HEADERONE || pkt.header[1] != HEADERTWO){
+         qDebug() << "ERROR EN LOS HEADER";
+         return;
+     }else{
+          qDebug()<<"Nuevo paquete recibido ok";
+     }
+
     uint32_t valChecksum= calcularChecksum(&pkt);
+
     if(valChecksum==pkt.checksum){
-        //aca hay que agregar el punto
-        // 5. Uso los datos
-        qDebug() << "Dist (mm):" << pkt.distanciaMm;
-        qDebug() << "Grados:" << pkt.grados;
-        qDebug() << "Pos X:" << pkt.posX;
-        qDebug() << "Pos Y:" << pkt.posY;
+        // agregar punto si es correcto
+        if(pkt.analizando==true){
+            sensAngulo.setAnguloDeg(pkt.grados);
+            sensLaser.setDistanciaMm(pkt.distanciaMm);
+            aCartesiano(sensLaser.getDistanciaMm(),sensAngulo.getAnguloDeg());
+
+            agregarPunto(puntoLeidoX,puntoLeidoY);
+            enviarMensaje(">ok<");
+
+            qDebug() << "Dist (mm):" << pkt.distanciaMm;
+            qDebug() << "Grados:" << pkt.grados;
+            qDebug() << "Pos X:" << pkt.posX;
+            qDebug() << "Pos Y:" << pkt.posY;
+        }else{
+            enviarMensaje("Botones activados");
+            enableBotones=true;
+        }
     }else{
         qDebug() << "ERROR EN EL PAQUETE";
     }
@@ -161,56 +178,56 @@ void MainWindow::enviarMensaje(QString mensaje)
 
 void MainWindow::on_pushButton_adelante_pressed()
 {
-    if(enBotones)
+    if(enableBotones)
     enviarMensaje("adelante");
 }
 
 
 void MainWindow::on_pushButton_adelante_released()
 {
-    if(enBotones)
+    if(enableBotones)
     enviarMensaje("detener");
 }
 
 
 void MainWindow::on_pushButton_izquierda_pressed()
 {
-    if(enBotones)
+    if(enableBotones)
         enviarMensaje("izquierda");
 }
 
 
 void MainWindow::on_pushButton_izquierda_released()
 {
-    if(enBotones)
+    if(enableBotones)
     enviarMensaje("detener");
 }
 
 
 void MainWindow::on_pushButton_derecha_pressed()
 {
-    if(enBotones)
+    if(enableBotones)
     enviarMensaje("derecha");
 }
 
 
 void MainWindow::on_pushButton_derecha_released()
 {
-    if(enBotones)
+    if(enableBotones)
     enviarMensaje("detener");
 }
 
 
 void MainWindow::on_pushButton_atras_pressed()
 {
-    if(enBotones)
+    if(enableBotones)
     enviarMensaje("atras");
 }
 
 
 void MainWindow::on_pushButton_atras_released()
 {
-    if(enBotones)
+    if(enableBotones)
     enviarMensaje("detener");
 }
 

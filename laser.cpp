@@ -2,12 +2,12 @@
 
 laser::laser() {}
 
-int laser::getDistanciaMm() const
+uint16_t laser::getDistanciaMm() const
 {
     return distanciaMm;
 }
 
-void laser::setDistanciaMm(int newDistanciaMm)
+void laser::setDistanciaMm(uint16_t newDistanciaMm)
 {
     distanciaMm = newDistanciaMm;
 }
