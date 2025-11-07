@@ -13,6 +13,7 @@ SOURCES += \
     magnetometro.cpp \
     main.cpp \
     mainwindow.cpp \
+    mygraphicsview.cpp \
     paquete.cpp \
     punto.cpp \
     vehiculo.cpp
@@ -21,6 +22,7 @@ HEADERS += \
     laser.h \
     magnetometro.h \
     mainwindow.h \
+    mygraphicsview.h \
     paquete.h \
     punto.h \
     vehiculo.h

@@ -1,10 +1,12 @@
-#ifndef VEHICULO_H
-#define VEHICULO_H
+#pragma once
 
-class vehiculo
+#include <QGraphicsItem>
+#include <QColor>
+#define CTE_RUEDA 3
+class vehiculo : public QGraphicsItem
 {
 public:
-    vehiculo();
+    vehiculo(double x, double y, const QColor &color);
 
 
     int getPosMmY() const;
@@ -12,13 +14,18 @@ public:
     int getPosMmX() const;
     void setPosMmX(int newPosMmX);
 
-    void adelante(int distanciaMm);
-    void atras(int distanciaMm);
-    void girar(int grados);
+    QRectF boundingRect() const override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
+
+    void actualizar_posicion(void);
+    void nueva_ubicacion(float grados, uint32_t pulsos, bool direccionAdelante);
 
 private:
-    int posMmY;
-    int posMmX;
-};
 
-#endif // VEHICULO_H
+
+    double posMmY;
+    double posMmX;
+
+    QColor colorVehiculo;
+
+};

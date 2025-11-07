@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QColor>
+#include <QWheelEvent>
 
 #include "punto.h"
 #include "magnetometro.h"
@@ -55,16 +56,34 @@ private slots:
 
     void on_pushButton_atras_released();
 
+    void on_horizontalSlider_valueChanged(int value);
+
+    void on_horizontalSlider_2_valueChanged(int value);
+
+    void on_horizontalSlider_sliderReleased();
+
+    void on_horizontalSlider_2_sliderReleased();
+
+    void on_pushButton_2_released();
+
+    void on_pushButton_released();
+
+    void on_checkBox_2_toggled(bool checked);
+
+    void actualizarLabelRango(const QRectF &rango);
+
 private:
 
     void agregarPunto(double x, double y, const QColor &color=Qt::red);
     void agregarPuntoEjemplo();
     void eliminarPunto(unsigned int numeroPunto);
-
+    unsigned int ID;
     void enviarMensaje(QString mensaje);
 
     Ui::MainWindow *ui;
     QGraphicsScene *escena;
+
+    double anguloVista = 0.0;
 
     Paquete pkt;
 
@@ -72,11 +91,16 @@ private:
 
     magnetometro sensAngulo;
     laser sensLaser;
-    vehiculo coche;
+    vehiculo *auto1=nullptr;
 
     bool enableBotones=false;
 
+    int maquinaEstado=0;
+    float anguloForz=0;
+    int cantidadPasos=0;
+
     QWebSocketServer *m_webSocketServer;
     QList<QWebSocket*> m_clients;
+
 };
 #endif // MAINWINDOW_H

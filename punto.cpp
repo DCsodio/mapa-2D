@@ -31,7 +31,7 @@ void Punto::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
     // círculo
     painter->setBrush(m_color);
     painter->setPen(Qt::black);
-    painter->drawEllipse(0, 0, 2, 2);
+    painter->drawEllipse(0, 0, 10, 10);
 
     // texto
     if(ENABLE_TEXTO){
