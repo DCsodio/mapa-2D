@@ -1,0 +1,10 @@
+release/laser.o
+release/magnetometro.o
+release/main.o
+release/mainwindow.o
+release/mygraphicsview.o
+release/paquete.o
+release/punto.o
+release/vehiculo.o
+release/moc_mainwindow.o
+release/moc_mygraphicsview.o

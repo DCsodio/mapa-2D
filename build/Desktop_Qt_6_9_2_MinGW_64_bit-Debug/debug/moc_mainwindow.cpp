@@ -51,7 +51,18 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         "on_pushButton_derecha_pressed",
         "on_pushButton_derecha_released",
         "on_pushButton_atras_pressed",
-        "on_pushButton_atras_released"
+        "on_pushButton_atras_released",
+        "on_horizontalSlider_valueChanged",
+        "value",
+        "on_horizontalSlider_2_valueChanged",
+        "on_horizontalSlider_sliderReleased",
+        "on_horizontalSlider_2_sliderReleased",
+        "on_pushButton_2_released",
+        "on_pushButton_released",
+        "on_checkBox_2_toggled",
+        "checked",
+        "actualizarLabelRango",
+        "rango"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -79,6 +90,30 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         QtMocHelpers::SlotData<void()>(12, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'on_pushButton_atras_released'
         QtMocHelpers::SlotData<void()>(13, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_horizontalSlider_valueChanged'
+        QtMocHelpers::SlotData<void(int)>(14, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 15 },
+        }}),
+        // Slot 'on_horizontalSlider_2_valueChanged'
+        QtMocHelpers::SlotData<void(int)>(16, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 15 },
+        }}),
+        // Slot 'on_horizontalSlider_sliderReleased'
+        QtMocHelpers::SlotData<void()>(17, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_horizontalSlider_2_sliderReleased'
+        QtMocHelpers::SlotData<void()>(18, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_pushButton_2_released'
+        QtMocHelpers::SlotData<void()>(19, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_pushButton_released'
+        QtMocHelpers::SlotData<void()>(20, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_checkBox_2_toggled'
+        QtMocHelpers::SlotData<void(bool)>(21, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Bool, 22 },
+        }}),
+        // Slot 'actualizarLabelRango'
+        QtMocHelpers::SlotData<void(const QRectF &)>(23, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::QRectF, 24 },
+        }}),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -113,6 +148,14 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 8: _t->on_pushButton_derecha_released(); break;
         case 9: _t->on_pushButton_atras_pressed(); break;
         case 10: _t->on_pushButton_atras_released(); break;
+        case 11: _t->on_horizontalSlider_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 12: _t->on_horizontalSlider_2_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 13: _t->on_horizontalSlider_sliderReleased(); break;
+        case 14: _t->on_horizontalSlider_2_sliderReleased(); break;
+        case 15: _t->on_pushButton_2_released(); break;
+        case 16: _t->on_pushButton_released(); break;
+        case 17: _t->on_checkBox_2_toggled((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 18: _t->actualizarLabelRango((*reinterpret_cast< std::add_pointer_t<QRectF>>(_a[1]))); break;
         default: ;
         }
     }
@@ -137,14 +180,14 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 11)
+        if (_id < 19)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 11;
+        _id -= 19;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 11)
+        if (_id < 19)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 11;
+        _id -= 19;
     }
     return _id;
 }
