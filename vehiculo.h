@@ -2,7 +2,7 @@
 
 #include <QGraphicsItem>
 #include <QColor>
-#define CTE_RUEDA 3
+#define CTE_RUEDA 11.08695652
 class vehiculo : public QGraphicsItem
 {
 public:

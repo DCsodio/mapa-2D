@@ -21,7 +21,7 @@ void vehiculo::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidge
     // círculo
     painter->setBrush(colorVehiculo);
     painter->setPen(Qt::blue);
-    painter->drawEllipse(0, 0, 40, 40);
+    painter->drawEllipse(0, 0, 100, 100);
 
 }
 

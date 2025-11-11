@@ -5,6 +5,7 @@
 #include <QGraphicsScene>
 #include <QColor>
 #include <QWheelEvent>
+#include <QTimer>
 
 #include "punto.h"
 #include "magnetometro.h"
@@ -36,6 +37,7 @@ private slots:
     void on_limpiar_clicked();
 
     void onNewConnection();
+    void onClientDisconnected();
     void onBinaryMessageReceived(const QByteArray &data);
 
 
@@ -98,6 +100,9 @@ private:
     int maquinaEstado=0;
     float anguloForz=0;
     int cantidadPasos=0;
+
+    QTimer timerIzquierda;
+    QTimer timerDerecha;
 
     QWebSocketServer *m_webSocketServer;
     QList<QWebSocket*> m_clients;

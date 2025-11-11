@@ -71,6 +71,14 @@ MainWindow::MainWindow(QWidget *parent)
     auto1 = new vehiculo(0, 0, Qt::red);
     escena->addItem(auto1);
 
+    connect(&timerIzquierda, &QTimer::timeout, this, [this]() {
+        if (ui->checkBox_2->isChecked())
+            enviarMensaje(">mI<");
+    });
+    connect(&timerDerecha, &QTimer::timeout, this, [this]() {
+        if (ui->checkBox_2->isChecked())
+            enviarMensaje(">mD<");
+    });
     agregarPuntoEjemplo();
 }
 
@@ -128,11 +136,12 @@ void MainWindow::agregarPuntoEjemplo(){
  * elimina del vector puntos
  * reoordena el vector puntos
  */
-void MainWindow::eliminarPunto(unsigned int numeroPunto){
+
+//void MainWindow::eliminarPunto(unsigned int numeroPunto){
     /*
      * aca se deberia plantear _ID de cada punto buscarlo en el vector y luego eliminarlo
      */
-}
+//}
 
 
 //impliementacion de websocket
@@ -140,17 +149,32 @@ void MainWindow::onNewConnection()
 {
     QWebSocket *client = m_webSocketServer->nextPendingConnection();
     m_clients.append(client);
+
     connect(client, &QWebSocket::binaryMessageReceived,
             this, &MainWindow::onBinaryMessageReceived);
 
-    connect(client, &QWebSocket::disconnected, this, [this, client]() {
-        m_clients.removeAll(client);
-        client->deleteLater();
-    });
+    connect(client, &QWebSocket::disconnected,
+            this, &MainWindow::onClientDisconnected);
 
-    ui->plainTextEdit->appendPlainText("Cliente conectado desde: "+client->peerAddress().toString());
+    ui->plainTextEdit->appendPlainText(
+        "Cliente conectado desde: " + client->peerAddress().toString());
     qDebug() << "Cliente conectado desde" << client->peerAddress().toString();
+    enviarMensaje("conectado");
 }
+
+void MainWindow::onClientDisconnected()
+{
+    QWebSocket *client = qobject_cast<QWebSocket *>(sender());
+    if (!client)
+        return;
+
+    qDebug() << "Cliente desconectado:" << client->peerAddress().toString();
+
+    disconnect(client, nullptr, this, nullptr); // 🔥 limpia todas sus señales
+    m_clients.removeAll(client);
+    client->deleteLater();
+}
+
 
 
 //slot de recibir paquete de wifi (EPS32)
@@ -184,7 +208,7 @@ void MainWindow::onBinaryMessageReceived(const QByteArray &data)
             sensLaser.setDistanciaMm(pkt.distanciaMm);
             QString datoss=" ANGULO RECIBIDO:"+QString::number(pkt.grados);
              ui->plainTextEdit->appendPlainText(datoss);
-            if(sensAngulo.getInicializado()){
+            if(!sensAngulo.getInicializado()){
                 sensAngulo.setAnguloDeg(pkt.grados);
                 anguloForz=sensAngulo.getAnguloDeg();
                 sensAngulo.setInicializado(true);
@@ -193,7 +217,7 @@ void MainWindow::onBinaryMessageReceived(const QByteArray &data)
             aCartesiano(sensLaser.getDistanciaMm(),anguloForz);
 
             if(sensLaser.getDistanciaMm()<2500){
-                agregarPunto(puntoLeidoX,puntoLeidoY);
+                agregarPunto(puntoLeidoX+auto1->getPosMmX(),puntoLeidoY+auto1->getPosMmY());
                 ui->plainTextEdit->appendPlainText("Punto agregado");
                 QString datos="distancia:"+QString::number(sensLaser.getDistanciaMm())+", angulo:"+QString::number(anguloForz);
                 ui->plainTextEdit->appendPlainText(datos);
@@ -201,32 +225,50 @@ void MainWindow::onBinaryMessageReceived(const QByteArray &data)
                 ui->plainTextEdit->appendPlainText("Punto no agregado");
             }
             qDebug()<<"pkt ok";
-            if(pkt.cantidadPasos!=cantidadPasos){
-                cantidadPasos=pkt.cantidadPasos;
-                anguloForz=anguloForz+1.8*cantidadPasos;
-            }
+
             if(maquinaEstado==0){
-                anguloForz=anguloForz+1.8;
-                if (anguloForz>sensAngulo.getAnguloDeg()+180){
-                    maquinaEstado=1;
+                anguloForz=anguloForz+1; //ang for181 y cp 181
+                if(pkt.cantidadPasos!=cantidadPasos){
+                    cantidadPasos=pkt.cantidadPasos;
+                    anguloForz=sensAngulo.getAnguloDeg()+1*cantidadPasos;
                 }
             }else if (maquinaEstado==1){
-                anguloForz=anguloForz-1.8;
-                if(anguloForz<sensAngulo.getAnguloDeg()){
-                    maquinaEstado=2;
+                anguloForz=anguloForz-1;
+                if(pkt.cantidadPasos!=cantidadPasos){
+                    cantidadPasos=pkt.cantidadPasos;
+                    anguloForz=sensAngulo.getAnguloDeg()+180-1*cantidadPasos;
                 }
             }else if(maquinaEstado==2){
-                anguloForz=anguloForz-1.8;
-                if(anguloForz<sensAngulo.getAnguloDeg()-180){
-                    maquinaEstado=3;
+                anguloForz=anguloForz-1;
+                if(pkt.cantidadPasos!=cantidadPasos){
+                    cantidadPasos=pkt.cantidadPasos;
+                    anguloForz=sensAngulo.getAnguloDeg()-1*cantidadPasos;
                 }
             }else if(maquinaEstado==3){
-                anguloForz=anguloForz+1.8;
-                if (anguloForz>sensAngulo.getAnguloDeg()){
-                    maquinaEstado=0;
+                anguloForz=anguloForz+1;
+                if(pkt.cantidadPasos!=cantidadPasos){
+                    cantidadPasos=pkt.cantidadPasos;
+                    anguloForz=sensAngulo.getAnguloDeg()-180+1*cantidadPasos;
                 }
             }
+            qDebug()<<"maquinaEstad:"<< QString::number(maquinaEstado);
             cantidadPasos++;
+            if(cantidadPasos>=181){
+                maquinaEstado++;
+                cantidadPasos=0;
+                if(maquinaEstado==1){
+                    anguloForz--;
+                }else if(maquinaEstado==2){
+                    anguloForz++;
+                }else if(maquinaEstado==3){
+                    anguloForz++;
+                }else if(maquinaEstado==4){
+                    anguloForz=0;
+                    sensAngulo.setInicializado(false);
+                    maquinaEstado=0;
+                }
+
+            }
         }else{
             if(!enableBotones){
                 qDebug()<<"movimiento activado";
@@ -251,13 +293,21 @@ void MainWindow::onBinaryMessageReceived(const QByteArray &data)
 
 void MainWindow::enviarMensaje(QString mensaje)
 {
-    if (!m_clients.isEmpty() && m_clients.first()->state() == QAbstractSocket::ConnectedState) {
-        m_clients.first()->sendTextMessage(mensaje); //el primer cliente es el esp32
+    mensaje = mensaje.trimmed();
+    qDebug() << "Intentando enviar:" << mensaje;
+
+    if (!m_clients.isEmpty() &&
+        m_clients.first() &&
+        m_clients.first()->state() == QAbstractSocket::ConnectedState) {
+
+        m_clients.first()->sendTextMessage(mensaje);
+        qDebug() << "Mensaje enviado correctamente";
     } else {
+        qDebug() << "No hay clientes conectados o desconectado";
         ui->plainTextEdit->appendPlainText("No hay clientes conectados o el primero está desconectado");
-        qDebug() << "No hay clientes conectados o el primero está desconectado";
     }
 }
+
 
 
 
@@ -281,36 +331,49 @@ void MainWindow::on_pushButton_adelante_released()
 
 void MainWindow::on_pushButton_izquierda_pressed()
 {
-    if(enableBotones){
+    if(enableBotones && !ui->checkBox_2->isChecked() ){
         ui->plainTextEdit->appendPlainText("izquierda");
         enviarMensaje(">a<");
+    }else if(ui->checkBox_2->isChecked()){
+        ui->plainTextEdit->appendPlainText("Calibrando");
+        timerIzquierda.start(100);
+
     }
 }
 
 
 void MainWindow::on_pushButton_izquierda_released()
 {
-    if(enableBotones){
+    if(enableBotones && !ui->checkBox_2->isChecked()){
         ui->plainTextEdit->appendPlainText("detener");
         enviarMensaje(">p<");
+    }else if(ui->checkBox_2->isChecked()){
+        ui->plainTextEdit->appendPlainText("Descativando calibracion");
+        timerIzquierda.stop();
     }
 }
 
 
 void MainWindow::on_pushButton_derecha_pressed()
 {
-    if(enableBotones){
+    if(enableBotones && !ui->checkBox_2->isChecked()){
         ui->plainTextEdit->appendPlainText("Derecha");
         enviarMensaje(">d<");
+    }else if(ui->checkBox_2->isChecked()){
+        ui->plainTextEdit->appendPlainText("Calibrando");
+        timerDerecha.start(100);
     }
 }
 
 
 void MainWindow::on_pushButton_derecha_released()
 {
-    if(enableBotones){
+    if(enableBotones && !ui->checkBox_2->isChecked()){
         ui->plainTextEdit->appendPlainText("Detener");
         enviarMensaje(">p<");
+    }else if(ui->checkBox_2->isChecked()){
+        ui->plainTextEdit->appendPlainText("Descativando calibracion");
+        timerDerecha.stop();
     }
 }
 
@@ -352,7 +415,7 @@ void MainWindow::on_horizontalSlider_2_sliderReleased()
 {
 
     int valor=ui->horizontalSlider_2->value();
-    QString nuevoValor= ">periodo:"+QString::number(valor)+"<";
+    QString nuevoValor= ">T:"+QString::number(valor)+"<";
     enviarMensaje(nuevoValor);
 
 }
@@ -366,22 +429,26 @@ void MainWindow::on_horizontalSlider_2_valueChanged(int value)
 
 void MainWindow::on_pushButton_2_released()
 {
-    enviarMensaje(">analizar<");
+    if(pkt.analizando==false){
+        enviarMensaje(">analizar<");
+        sensAngulo.setInicializado(false);
+        ui->plainTextEdit->appendPlainText("Analizando...");
+    }
 }
 
 
 void MainWindow::on_pushButton_released()
 {
-    enviarMensaje(">reset<");
+    enviarMensaje(">stop<");
 }
 
 
 void MainWindow::on_checkBox_2_toggled(bool checked)
 {
     if(checked){
-        enviarMensaje(">enMov<");
+        enviarMensaje(">enStepper<");
     }else{
-        enviarMensaje(">disMov<");
+        enviarMensaje(">disStepper<");
     }
 }
 
