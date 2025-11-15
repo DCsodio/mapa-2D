@@ -49,14 +49,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     escena=new QGraphicsScene(this);
 
-    ui->graphicsView->scale(1, 1);
-    escena->setSceneRect(-4000, -4000, 8000, 8000);
+    ui->graphicsView->scale(1, -1);
+    escena->setSceneRect(-100000, -100000, 200000, 200000);
     ui->graphicsView->centerOn(0, 0);
     escena->setBackgroundBrush(Qt::gray);
     ui->graphicsView->setScene(escena);
 
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
+    ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
     ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     ui->graphicsView->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
     ui->graphicsView->grabGesture(Qt::PinchGesture);
@@ -108,7 +109,8 @@ void MainWindow::agregarPunto(double x, double y, const QColor &color)
 {
     Punto *p = new Punto(x, y, ID, color); // Pasamos el ID al constructor
     puntos.push_back(p);                     // Guardamos el puntero en el vector
-    escena->addItem(p);                      // Lo agregamos a la escena
+    escena->addItem(p);
+    p->setFlag(QGraphicsItem::ItemIsSelectable, true);    // Lo agregamos a la escena
     ID++;
     qDebug() << "Nuevo punto agregado a la escena, ID:" << ID;
     ui->plainTextEdit->appendPlainText("Nuevo punto agregado ID: "+QString::number(ID));
@@ -275,10 +277,13 @@ void MainWindow::onBinaryMessageReceived(const QByteArray &data)
                 ui->plainTextEdit->appendPlainText("Movimiento activado");
                 enableBotones=true;
                 sensAngulo.setInicializado(false);
+                maquinaEstado=0;
+                cantidadPasos=0;
                 anguloForz=0;
             }else{
                 ui->plainTextEdit->appendPlainText(QString::number(pkt.pulsos));
                 sensAngulo.setAnguloDeg(pkt.grados);
+                ui->plainTextEdit->appendPlainText(QString::number(pkt.grados));
                 auto1->nueva_ubicacion(sensAngulo.getAnguloDeg(),pkt.pulsos,pkt.direccionAdelante);
                 auto1->actualizar_posicion();
             }

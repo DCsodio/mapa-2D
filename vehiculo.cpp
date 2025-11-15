@@ -5,8 +5,6 @@ vehiculo::vehiculo(double x, double y, const QColor &color){
 
     posMmX=0;
     posMmY=0;
-    posMmX=x;
-    posMmY=y;
     colorVehiculo=color;
 }
 
@@ -21,7 +19,7 @@ void vehiculo::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidge
     // círculo
     painter->setBrush(colorVehiculo);
     painter->setPen(Qt::blue);
-    painter->drawEllipse(0, 0, 100, 100);
+    painter->drawEllipse(QPointF(0.0, 0.0), 100, 100);
 
 }
 
